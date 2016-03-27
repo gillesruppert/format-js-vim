@@ -14,7 +14,19 @@ function! s:FormatJS()
   execute ':lcd' . file_wd
 
   " pass whole buffer content to esformatter
-  let output = system('formatjs --row ' . row . ' --col ' . win_view.col, join(getline(1,'$'), "\n"))
+  let cmd = 'formatjs --row ' . row . ' --col ' . win_view.col
+
+  if exists('g:formatjs_builtins')
+    let cmd = cmd . ' --builtins ' . g:formatjs_builtins
+  endif
+  if exists('g:formatjs_builtintypes')
+    let cmd = cmd . ' --builtintypes ' . g:formatjs_builtintypes
+  endif
+  if exists('g:formatjs_aliases')
+    let cmd = cmd . ' --aliases ' . g:formatjs_aliases
+  endif
+
+  let output = system(cmd, join(getline(1,'$'), "\n"))
 
   if v:shell_error
     echom "Error while executing formatjs! no changes made."
